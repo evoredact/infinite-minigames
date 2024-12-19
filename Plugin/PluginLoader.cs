@@ -20,7 +20,7 @@ public class PluginLoader : BasePlugin {
 
 	public PluginLoader() {}
 
-    internal static Harmony harmony = new Harmony("sexyy");
+    internal static Harmony harmony = new Harmony("Harmonyy");
 
     public bool allowMiniGameStopping = false;
 
