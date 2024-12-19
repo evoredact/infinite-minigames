@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace TestPlugin;
+namespace InfiniteMinigames;
 
-public class TestPlugin : MonoBehaviour {
+public class InfiniteMinigamesPlugin : MonoBehaviour {
     void Update() {
         if (Input.GetKeyDown(KeyCode.F3)) {
             PluginInfo.Instance.allowMiniGameStopping = !PluginInfo.Instance.allowMiniGameStopping;

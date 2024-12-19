@@ -4,7 +4,7 @@ using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System.Reflection;
 
-namespace TestPlugin;
+namespace InfiniteMinigames;
 
 public static class PluginInfo {
 	public const string PLUGIN_GUID = "org.rust.miside.InfiniteMinigames";
@@ -22,7 +22,6 @@ public class PluginLoader : BasePlugin {
 
     internal static Harmony harmony = new Harmony("sexyy");
 
-    public bool toggleFreakyMode = false;
     public bool allowMiniGameStopping = true;
 
     public override void Load() {
@@ -35,7 +34,7 @@ public class PluginLoader : BasePlugin {
         harmony.Patch(typeof(Location4TableCardGame).GetMethod("LookResult"), new HarmonyMethod(typeof(PluginLoader).GetMethod("Prefix_CardLookResult", BindingFlags.Static | BindingFlags.NonPublic)));
         harmony.PatchAll();
 
-        IL2CPPChainloader.AddUnityComponent(typeof(TestPlugin));
+        IL2CPPChainloader.AddUnityComponent(typeof(InfiniteMinigamesPlugin));
 	}
 
     private static bool Prefix_CardUpdate(ref Location4TableCardGame __instance) {
