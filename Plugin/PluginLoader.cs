@@ -22,7 +22,7 @@ public class PluginLoader : BasePlugin {
 
     internal static Harmony harmony = new Harmony("sexyy");
 
-    public bool allowMiniGameStopping = true;
+    public bool allowMiniGameStopping = false;
 
     public override void Load() {
 		Logger = (this as BasePlugin).Log;
