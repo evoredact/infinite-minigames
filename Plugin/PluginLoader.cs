@@ -7,7 +7,7 @@ using System.Reflection;
 namespace InfiniteMinigames;
 
 public static class PluginInfo {
-	public const string PLUGIN_GUID = "org.rust.miside.InfiniteMinigames";
+	public const string PLUGIN_GUID = "org.redact.miside.InfiniteMinigames";
 	public const string PLUGIN_NAME = "Infinite Minigames";
 	public const string PLUGIN_VERSION = "0.0.1";
 
@@ -22,7 +22,7 @@ public class PluginLoader : BasePlugin {
 
     internal static Harmony harmony = new Harmony("Harmonyy");
 
-    public bool allowMiniGameStopping = false;
+    public bool allowInfiniteMinigames = true;
 
     public override void Load() {
 		Logger = (this as BasePlugin).Log;
@@ -38,7 +38,7 @@ public class PluginLoader : BasePlugin {
 	}
 
     private static bool Prefix_CardUpdate(ref Location4TableCardGame __instance) {
-        if (!PluginInfo.Instance.allowMiniGameStopping)
+        if (PluginInfo.Instance.allowInfiniteMinigames)
             if (__instance.countSteps > 3)
                 __instance.countSteps--;
 
@@ -47,7 +47,7 @@ public class PluginLoader : BasePlugin {
 
     private static bool Prefix_CardLookResult(ref Location4TableCardGame __instance) {
         //Console.WriteLine("Checking results");
-        if (!PluginInfo.Instance.allowMiniGameStopping) {
+        if (PluginInfo.Instance.allowInfiniteMinigames) {
             //Console.WriteLine("IsPlayerHoldingCards: {0}", __instance.playerHoldCards);
             if (__instance.playerHoldCards) {
                 int playerCardsCount = -1;
