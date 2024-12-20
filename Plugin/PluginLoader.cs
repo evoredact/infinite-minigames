@@ -71,8 +71,11 @@ public class PluginLoader : BasePlugin {
 
     internal class TemporaryShooterSettingz : MonoBehaviour {
         public int killed = 0;
+        public readonly int defaultMobsCount = 20;
+        public readonly float defaultMobMultiplier = 1f;
+        public float mobMultiplier = 1f;
     }
-    internal static class Patch_Shooter_Enemy {
+    internal static class ShooterFunctions {
         internal static int CountEnemies(Il2CppSystem.Collections.Generic.List<Shooter_Main_TimePart> enemies, int type) {
             int count = 0;
             foreach (Shooter_Main_TimePart timePart in enemies) {
@@ -81,7 +84,25 @@ public class PluginLoader : BasePlugin {
             }
             return count;
         }
-
+        internal static Shooter_Main_Wave CreateWave(TemporaryShooterSettingz settings, Shooter_Main_Wave lastWave) {
+            settings.killed = 0;
+            Shooter_Main_Wave wave = new();
+            Il2CppSystem.Collections.Generic.List<Shooter_Main_TimePart> enemies = new();
+            settings.mobMultiplier += 0.4f;
+            int enemiesCount = (int)(settings.defaultMobsCount * settings.mobMultiplier);
+            for (int i = 0; i < enemiesCount; i++)
+            {
+                int type = UnityEngine.Random.RandomRange(0, 4);
+                if (type == 2 && CountEnemies(enemies, 2) > 2)
+                    type = 1;
+                enemies.Add(new() { nextTime = UnityEngine.Random.RandomRange(0f, 0.6f), typeEnemy = type }); // Shooter_Enemy.TypeShooterEnemy
+            }
+            wave.caseWave = GameObject.Instantiate(lastWave.caseWave);
+            wave.enemys = enemies;
+            return wave;
+        }
+    }
+    internal static class Patch_Shooter_Enemy {
         [HarmonyPatch(typeof(Shooter_Enemy), "Death")]
         [HarmonyPrefix]
         private static bool Death(Shooter_Enemy __instance) {
@@ -92,18 +113,7 @@ public class PluginLoader : BasePlugin {
 
                 Shooter_Main_Wave lastWave = __instance.componentMain.waves[__instance.componentMain.indexWave];
                 if (__instance.componentMain.indexWave > 1 && settings.killed == lastWave.enemys.Count) {
-                    settings.killed = 0;
-                    Shooter_Main_Wave wave = new();
-                    Il2CppSystem.Collections.Generic.List<Shooter_Main_TimePart> enemies = new();
-                    for (int i = 0; i < lastWave.enemys.Count + 7; i++) {
-                        int type = UnityEngine.Random.RandomRange(0, 4);
-                        if (type == 2 && CountEnemies(enemies, 2) > 2)
-                            type = 1;
-                        enemies.Add(new() { nextTime = UnityEngine.Random.RandomRange(0f, 0.6f), typeEnemy = type }); // Shooter_Enemy.TypeShooterEnemy
-                    }
-                    wave.caseWave = GameObject.Instantiate(lastWave.caseWave);
-                    wave.enemys = enemies;
-                    __instance.componentMain.waves[2] = wave;
+                    __instance.componentMain.waves[2] = ShooterFunctions.CreateWave(settings, lastWave);
                     __instance.componentMain.indexWave = 1;
                     __instance.componentMain.NextWave();
                     //return false;
@@ -117,6 +127,11 @@ public class PluginLoader : BasePlugin {
         [HarmonyPrefix]
         private static void Death(Shooter_Player __instance) {
             if (PluginInfo.Instance.allowInfiniteMinigames) {
+                TemporaryShooterSettingz settings = __instance.scrmain.gameObject.GetComponent<TemporaryShooterSettingz>();
+                settings.mobMultiplier = settings.defaultMobMultiplier;
+                settings.killed = 0;
+                Shooter_Main_Wave lastWave = __instance.scrmain.waves[__instance.scrmain.indexWave];
+                __instance.scrmain.waves[2] = ShooterFunctions.CreateWave(settings, lastWave);
                 __instance.scrmain.RestartFull();
             }
         }
