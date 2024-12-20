@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using Assimp;
+using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
@@ -83,7 +84,7 @@ public class PluginLoader : BasePlugin {
 
         [HarmonyPatch(typeof(Shooter_Enemy), "Death")]
         [HarmonyPrefix]
-        private static void Death(Shooter_Enemy __instance) {
+        private static bool Death(Shooter_Enemy __instance) {
             if (PluginInfo.Instance.allowInfiniteMinigames && __instance.componentMain.indexWave > 1) {
 
                 TemporaryShooterSettingz settings = __instance.componentMain.gameObject.GetComponent<TemporaryShooterSettingz>();
@@ -109,6 +110,7 @@ public class PluginLoader : BasePlugin {
                     //return false;
                 }
             }
+            return true;
         }
     }
     internal static class Patch_Shooter_Player {
