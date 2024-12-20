@@ -98,7 +98,7 @@ public class PluginLoader : BasePlugin {
                     Il2CppSystem.Collections.Generic.List<Shooter_Main_TimePart> enemies = new();
                     for (int i = 0; i < lastWave.enemys.Count + 7; i++) {
                         int type = UnityEngine.Random.RandomRange(0, 4);
-                        if (type == 2 && CountEnemies(enemies, 2) > 4)
+                        if (type == 2 && CountEnemies(enemies, 2) > 2)
                             type = 1;
                         enemies.Add(new() { nextTime = UnityEngine.Random.RandomRange(0f, 0.6f), typeEnemy = type }); // Shooter_Enemy.TypeShooterEnemy
                     }
