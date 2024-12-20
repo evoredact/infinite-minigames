@@ -100,7 +100,7 @@ public class PluginLoader : BasePlugin {
                         int type = UnityEngine.Random.RandomRange(0, 4);
                         if (type == 2 && CountEnemies(enemies, 2) > 4)
                             type = 1;
-                        enemies.Add(new() { nextTime = UnityEngine.Random.RandomRange(0f, 0.3f), typeEnemy = type }); // Shooter_Enemy.TypeShooterEnemy
+                        enemies.Add(new() { nextTime = UnityEngine.Random.RandomRange(0f, 0.6f), typeEnemy = type }); // Shooter_Enemy.TypeShooterEnemy
                     }
                     wave.caseWave = GameObject.Instantiate(lastWave.caseWave);
                     wave.enemys = enemies;
