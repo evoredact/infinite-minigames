@@ -91,7 +91,6 @@ public class PluginLoader : BasePlugin {
                 settings.killed++;
 
                 Shooter_Main_Wave lastWave = __instance.componentMain.waves[__instance.componentMain.indexWave];
-                Console.WriteLine("K: {0}, E: {1}", settings.killed, lastWave.enemys.Count);
                 if (__instance.componentMain.indexWave > 1 && settings.killed == lastWave.enemys.Count) {
                     settings.killed = 0;
                     Shooter_Main_Wave wave = new();
