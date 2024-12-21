@@ -1,7 +1,9 @@
 # Infinite Minigames
 
+**INFINITE MINIGAMES BY DEFAULT IS ON**
+
 Allows you to play minigames forever by pressing `F3`. Inside the console you can see when the mod is on/off.
-When mod is off you can continue your run. **INFINITE MINIGAMES BY DEFAULT IS ON**
+When mod is off you can continue your run.
 
 # Requires BepInEx 6.0.0
 You need to install bepinex to root game folder from bepis builds.
