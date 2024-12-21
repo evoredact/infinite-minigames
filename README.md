@@ -6,11 +6,9 @@ Allows you to play minigames forever by pressing `F3`. Inside the console you ca
 When mod is off you can continue your run.
 
 ## Current supported minigames:
-Hetoor
-
-Mila's glitches (1, 2, 4)
-
-QuadLiner
+* Hetoor
+* Mila's glitches (1, 2, 4)
+* QuadLiner
 
 Also you can take tetris by pressing `F2` without need to wait in afk.
 
