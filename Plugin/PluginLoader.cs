@@ -1,5 +1,4 @@
-﻿using Assimp;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
@@ -11,12 +10,12 @@ namespace InfiniteMinigames;
 public static class PluginInfo {
 	public const string PLUGIN_GUID = "org.redact.miside.InfiniteMinigames";
 	public const string PLUGIN_NAME = "Infinite Minigames";
-	public const string PLUGIN_VERSION = "0.0.2";
+	public const string PLUGIN_VERSION = "0.0.3";
 
 	public static PluginLoader Instance;
 }
 
-// add gui score for every minigame
+// READ EVERY TODO COMMENT
 
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class PluginLoader : BasePlugin {
@@ -33,6 +32,8 @@ public class PluginLoader : BasePlugin {
 		PluginInfo.Instance = this;
 
         Harmony.DEBUG = true;
+
+        harmony.PatchAll(typeof(Patch_QuadLinerMain));
 
         harmony.PatchAll(typeof(Patch_MinigamesAutomate));
 
@@ -61,6 +62,44 @@ public class PluginLoader : BasePlugin {
         return path;
     }
 
+    // add scoreboard
+    internal static class Patch_QuadLinerMain {
+        internal static readonly int maxCells = 77;
+        //internal static readonly int[][] presavedWaves = new int[][]
+        //{
+        //    new int[] { },
+        //    new int[] { }
+        //};
+
+        [HarmonyPatch(typeof(QuadLinerMain), "CreateNextWave")]
+        [HarmonyPrefix]
+        private static void CreateNextWave(QuadLinerMain __instance) {
+            if (PluginInfo.Instance.allowInfiniteMinigames && __instance.waveNow > 42) {
+                QuadLinerMain_Wave wave = new() {
+                    time = UnityEngine.Random.RandomRange(1.7f, 3f)
+                };
+                int enemiesCount = (int)(wave.time * 11f);
+                List<int> enemies = new List<int>();
+                List<int> enemiesShield = new List<int>();
+                for (int i = 0; i < enemiesCount; i++) {
+                    int randomEnemy = UnityEngine.Random.RandomRange(0, 11);
+                    if (UnityEngine.Random.RandomRange(1, 25) == 4 && enemiesShield.Count < 4) {
+                        enemiesShield.Add(randomEnemy);
+                    } else {
+                        if (enemies.Count(f => f == randomEnemy) > 6)
+                            i--;
+                        else enemies.Add(randomEnemy);
+                    }
+                }
+                wave.enemys = enemies.ToArray();
+                wave.enemysShield = enemiesShield.ToArray();
+                wave.caseWave = __instance.waves[42].caseWave;
+                __instance.waveNow--;
+                __instance.waves[43] = wave;
+            }
+        }
+    }
+
     internal static class Patch_MinigamesAutomate {
         [HarmonyPatch(typeof(MinigamesAutomate), "Start")]
         [HarmonyPostfix]
@@ -69,6 +108,7 @@ public class PluginLoader : BasePlugin {
         }
     }
 
+    // for some reason enemies death gives error bruh
     internal class TemporaryShooterSettingz : MonoBehaviour {
         public int killed = 0;
         public readonly int defaultMobsCount = 20;
@@ -97,7 +137,7 @@ public class PluginLoader : BasePlugin {
                     type = 1;
                 enemies.Add(new() { nextTime = UnityEngine.Random.RandomRange(0f, 0.6f), typeEnemy = type }); // Shooter_Enemy.TypeShooterEnemy
             }
-            wave.caseWave = GameObject.Instantiate(lastWave.caseWave);
+            wave.caseWave = lastWave.caseWave;
             wave.enemys = enemies;
             return wave;
         }
@@ -155,6 +195,7 @@ public class PluginLoader : BasePlugin {
         }
     }
 
+    // add scoreboard
     internal static class Patch_Location19_Game1 {
         [HarmonyPatch(typeof(Location19_Game1), "Finish")]
         [HarmonyPrefix]
@@ -166,6 +207,7 @@ public class PluginLoader : BasePlugin {
             return true;
         }
     }
+    // add scoreboard
     internal static class Patch_Location19_Game2 {
         [HarmonyPatch(typeof(Location19_Game2), "PointCLick")]
         [HarmonyPrefix]
@@ -179,7 +221,7 @@ public class PluginLoader : BasePlugin {
             return true;
         }
     }
-    // can't restart the game, might require custom shuffle
+    // can't restart the game, might require custom shuffle, add scoreboard
     //internal static class Patch_Location19_Game3 {
     //    private static int CountRightPlanets(Location19_Game3_Planet planet) {
     //        return planet.figures.Count(f => {
@@ -211,6 +253,7 @@ public class PluginLoader : BasePlugin {
     //        return true;
     //    }
     //}
+    // add scoreboard
     internal static class Patch_Location19_Game4 {
         [HarmonyPatch(typeof(Location19_Game4), "Shot")]
         [HarmonyPrefix]
@@ -226,7 +269,7 @@ public class PluginLoader : BasePlugin {
         }
     }
 
-    // carrot cut at first meet, a little bit broken
+    // carrot cut at first meet, a little bit broken, add scoreboard
     //internal static class Patch_Location3CutCarrot {
     //    private static Vector3[] positions = null;
     //    private static Quaternion[] rotations = null;
